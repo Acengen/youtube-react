@@ -1,26 +1,54 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios';
+import './App.css'
+import Searchbar from './Components/Searchbar';
+import VideoList from './Components/VideoList';
+import VideoDetail from './Components/VideoDetail';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+    state = {
+        videos: [],
+        onSelectVideo: ''
+    }
+
+    componentDidMount() {
+        this.seachForApi('buildings')
+    }
+
+    seachForApi = async(term) => {
+        const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+            params: {
+                q: term,
+                part: 'snippet',
+                maxResults: 3,
+                key: 'AIzaSyB52NPbCDI-444LdIfwALz11CDeUe52OgM'
+            }
+        });
+
+        this.setState({
+            videos: response.data.items,
+            onSelectVideo: response.data.items[0]
+        })
+    }
+
+    onVideoSelect = (video) => {
+        this.setState({
+            onSelectVideo: video
+        })
+    }
+
+    render() {
+        return(
+            <div className="container-fluid" style={{backgroundColor: '#eeeeee',padding:'5px'}}>
+                <Searchbar search={this.seachForApi}/>
+                <div className="video-cont">
+                <VideoDetail video={this.state.onSelectVideo}/>
+                <VideoList videos={this.state.videos} selectVideo={this.onVideoSelect}/>
+                </div>
+            </div>
+        )
+    }
 }
 
 export default App;

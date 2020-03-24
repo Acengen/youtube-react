@@ -1,0 +1,8 @@
+.card {
+    width: 250px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    background-color: #b83b5e;
+    color: white;
+    border-color: white !important;
+}
